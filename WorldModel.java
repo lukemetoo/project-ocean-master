@@ -19,44 +19,44 @@ final class WorldModel
 
    private static final int FISH_REACH = 1;
    private static final String FISH_KEY = "fish";
-   private static final int FISH_NUM_PROPERTIES = 5;
+   /*private static final int FISH_NUM_PROPERTIES = 5;
    private static final int FISH_ID = 1;
    private static final int FISH_COL = 2;
    private static final int FISH_ROW = 3;
-   private static final int FISH_ACTION_PERIOD = 4;
+   private static final int FISH_ACTION_PERIOD = 4;*/
    private static final String FISH_ID_PREFIX = "fish -- ";
    private static final int FISH_CORRUPT_MIN = 20000;
    private static final int FISH_CORRUPT_MAX = 30000;
 
-
-   private static final int BGND_NUM_PROPERTIES = 4;
+   private static final String BGND_KEY = "background";
+   /*private static final int BGND_NUM_PROPERTIES = 4;
    private static final int BGND_ID = 1;
    private static final int BGND_COL = 2;
-   private static final int BGND_ROW = 3;
+   private static final int BGND_ROW = 3;*/
 
    private static final String OCTO_KEY = "octo";
-   private static final int OCTO_NUM_PROPERTIES = 7;
+   /*private static final int OCTO_NUM_PROPERTIES = 7;
    private static final int OCTO_ID = 1;
    private static final int OCTO_COL = 2;
    private static final int OCTO_ROW = 3;
    private static final int OCTO_LIMIT = 4;
    private static final int OCTO_ACTION_PERIOD = 5;
-   private static final int OCTO_ANIMATION_PERIOD = 6;
+   private static final int OCTO_ANIMATION_PERIOD = 6;*/
 
    private static final String ATLANTIS_KEY = "atlantis";
-   private static final int ATLANTIS_NUM_PROPERTIES = 4;
+   /*private static final int ATLANTIS_NUM_PROPERTIES = 4;
    private static final int ATLANTIS_ID = 1;
    private static final int ATLANTIS_COL = 2;
-   private static final int ATLANTIS_ROW = 3;
+   private static final int ATLANTIS_ROW = 3;*/
    private static final int ATLANTIS_ANIMATION_PERIOD = 70;
    private static final int ATLANTIS_ANIMATION_REPEAT_COUNT = 7;
 
    private static final String SGRASS_KEY = "seaGrass";
-   private static final int SGRASS_NUM_PROPERTIES = 5;
+   /*private static final int SGRASS_NUM_PROPERTIES = 5;
    private static final int SGRASS_ID = 1;
    private static final int SGRASS_COL = 2;
    private static final int SGRASS_ROW = 3;
-   private static final int SGRASS_ACTION_PERIOD = 4;
+   private static final int SGRASS_ACTION_PERIOD = 4;*/
 
    private static final String CRAB_KEY = "crab";
    private static final String CRAB_ID_SUFFIX = " -- crab";
@@ -66,14 +66,13 @@ final class WorldModel
 
 
    private static final String OBSTACLE_KEY = "obstacle";
-   private static final int OBSTACLE_NUM_PROPERTIES = 4;
+   /*private static final int OBSTACLE_NUM_PROPERTIES = 4;
    private static final int OBSTACLE_ID = 1;
    private static final int OBSTACLE_COL = 2;
-   private static final int OBSTACLE_ROW = 3;
+   private static final int OBSTACLE_ROW = 3;*/
 
    private static final int PROPERTY_KEY = 0;
 
-   private static final String BGND_KEY = "background";
 
    private int numRows;
    private int numCols;
@@ -369,7 +368,7 @@ final class WorldModel
    }
 
    public boolean processLine(String line, WorldModel world,
-                                     ImageStore imageStore)
+                                     ImageStore imageStore, EntityParser parser)
    {
       String[] properties = line.split("\\s");
       if (properties.length > 0)
@@ -377,24 +376,24 @@ final class WorldModel
          switch (properties[PROPERTY_KEY])
          {
             case BGND_KEY:
-               return world.parseBackground(properties, world, imageStore);
+               return parser.parseBackground(properties, world, imageStore);
             case OCTO_KEY:
-               return world.parseOcto(properties, world, imageStore);
+               return parser.parseOcto(properties, world, imageStore);
             case OBSTACLE_KEY:
-               return world.parseObstacle(properties, world, imageStore);
+               return parser.parseObstacle(properties, world, imageStore);
             case FISH_KEY:
-               return world.parseFish(properties, world, imageStore);
+               return parser.parseFish(properties, world, imageStore);
             case ATLANTIS_KEY:
-               return world.parseAtlantis(properties, world, imageStore);
+               return parser.parseAtlantis(properties, world, imageStore);
             case SGRASS_KEY:
-               return world.parseSgrass(properties, world, imageStore);
+               return parser.parseSgrass(properties, world, imageStore);
          }
       }
 
       return false;
    }
 
-   public boolean parseBackground(String [] properties,
+   /*public boolean parseBackground(String [] properties,
                                          WorldModel world, ImageStore imageStore)
    {
       if (properties.length == BGND_NUM_PROPERTIES)
@@ -490,7 +489,7 @@ final class WorldModel
       }
 
       return properties.length == SGRASS_NUM_PROPERTIES;
-   }
+   } */
 
    public String getFishKey(){
       return FISH_KEY;

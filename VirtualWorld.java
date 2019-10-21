@@ -155,12 +155,14 @@ public final class VirtualWorld
       }
    }
 
-   private void loadImages(Scanner in, ImageStore imageStore,
-                                 PApplet screen) {
+   private void loadImages(Scanner in, ImageStore imageStore, PApplet screen) {
+
+      EntityParser parser = new EntityParser();
+
       int lineNumber = 0;
       while (in.hasNextLine()) {
          try {
-            processImageLine(imageStore.getImages(), in.nextLine(), screen);
+            processImageLine(imageStore.getImages(), in.nextLine(), screen, parser);
          } catch (NumberFormatException e) {
             System.out.println(String.format("Image format error on line %d",
                     lineNumber));
@@ -170,7 +172,7 @@ public final class VirtualWorld
    }
 
    private void processImageLine(Map<String, List<PImage>> images,
-                                        String line, PApplet screen) {
+                                 String line, PApplet screen, EntityParser parser) {
       String[] attrs = line.split("\\s");
       if (attrs.length >= 2) {
          String key = attrs[0];
@@ -216,10 +218,12 @@ public final class VirtualWorld
    }
 
    private void load(Scanner in, WorldModel world, ImageStore imageStore) {
+
+      EntityParser parser = new EntityParser();
       int lineNumber = 0;
       while (in.hasNextLine()) {
          try {
-            if (!world.processLine(in.nextLine(), world, imageStore)) {
+            if (!world.processLine(in.nextLine(), world, imageStore, parser)) {
                System.err.println(String.format("invalid entry on line %d",
                        lineNumber));
             }

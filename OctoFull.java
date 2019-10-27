@@ -3,7 +3,7 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class OctoFull implements Entity {
+public class OctoFull implements Octo {
 
     private String id;
     private Point position;
@@ -29,18 +29,12 @@ public class OctoFull implements Entity {
 
     }
 
-    public int getAnimationPeriod(){
-        return this.animationPeriod;
-    }
-
-    public void nextImage()
-    {
-        this.imageIndex = (this.imageIndex + 1) % this.images.size();
-    }
-
     public void executeOctoFullActivity(WorldModel world,
                                         ImageStore imageStore, EventScheduler scheduler)
     {
+
+        EntityCreator entityCreator = new EntityCreator(); // made this
+
         Optional<Entity> fullTarget = world.findNearest(this.position,
                 Atlantis.class);
 
@@ -48,10 +42,10 @@ public class OctoFull implements Entity {
                 moveToFull(world, fullTarget.get(), scheduler))
         {
             //at atlantis trigger animation
-            fullTarget.get().scheduleActions(scheduler, world, imageStore);
+            ((ActiveEntity)(fullTarget.get())).scheduleActions(scheduler, world, imageStore);
 
             //transform to unfull
-            this.transformFull(world, scheduler, imageStore);
+            this.transformFull(world, scheduler, imageStore, entityCreator); // changed this
         }
         else
         {
@@ -61,20 +55,12 @@ public class OctoFull implements Entity {
         }
     }
 
-    public void scheduleActions(EventScheduler scheduler,
-                                WorldModel world, ImageStore imageStore){
 
-        scheduler.scheduleEvent(this,
-                this.createActivityAction(world, imageStore),
-                this.actionPeriod);
-        scheduler.scheduleEvent(this, this.createAnimationAction(0),
-                this.getAnimationPeriod());
-    }
 
     public void transformFull(WorldModel world,
-                              EventScheduler scheduler, ImageStore imageStore)
+                              EventScheduler scheduler, ImageStore imageStore, EntityCreator entityCreator) // changed this
     {
-        Entity octo = world.createOctoNotFull(this.id, this.resourceLimit,
+        Entity octo = entityCreator.createOctoNotFull(this.id, this.resourceLimit, // changed this
                 this.position, this.actionPeriod, this.animationPeriod,
                 this.images);
 
@@ -82,7 +68,7 @@ public class OctoFull implements Entity {
         scheduler.unscheduleAllEvents(this);
 
         world.addEntity(octo);
-        octo.scheduleActions(scheduler, world, imageStore);
+        ((ActiveEntity)(octo)).scheduleActions(scheduler, world, imageStore);
     }
 
     public boolean moveToFull(WorldModel world,
@@ -132,35 +118,43 @@ public class OctoFull implements Entity {
         return newPos;
     }
 
+    public void scheduleActions(EventScheduler scheduler,
+                                WorldModel world, ImageStore imageStore){
+
+        scheduler.scheduleEvent(this,
+                this.createActivityAction(world, imageStore),
+                this.actionPeriod);
+        scheduler.scheduleEvent(this, this.createAnimationAction(0),
+                this.getAnimationPeriod());
+    }
+
     public Action createAnimationAction(int repeatCount)
     {
         return new AnimationAction(this, null, null, repeatCount);
     }
-
     public Action createActivityAction(WorldModel world,
-                                       ImageStore imageStore)
-    {
-        return new ActivityAction(this, world, imageStore, 0);
-    }
-
+                                       ImageStore imageStore) { return new ActivityAction(this, world, imageStore, 0); }
     public Point getPosition(){
         return position;
     }
-
     public void setPosition(Point position) {
         this.position = position;
     }
-
     public List<PImage> getImages(){
         return images;
     }
-
     public int getImageIndex(){
         return imageIndex;
     }
-
     public int getActionPeriod(){
         return actionPeriod;
+    }
+    public int getAnimationPeriod(){
+        return this.animationPeriod;
+    }
+    public void nextImage()
+    {
+        this.imageIndex = (this.imageIndex + 1) % this.images.size();
     }
 
 

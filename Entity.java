@@ -4,23 +4,23 @@ import java.util.List;
 
 public interface Entity {
 
-    int getAnimationPeriod();
+    //int getAnimationPeriod(); // Moveable entity
 
-    void nextImage();
+   // void nextImage(); // Moveable Entity
 
-    void scheduleActions(EventScheduler scheduler, WorldModel world, ImageStore imageStore);
+    //void scheduleActions(EventScheduler scheduler, WorldModel world, ImageStore imageStore); // MoveableEntity
 
-    Action createAnimationAction(int repeatCount);
+    //Action createAnimationAction(int repeatCount); // Moveable Entity
 
-    Action createActivityAction(WorldModel world, ImageStore imageStore);
+    //Action createActivityAction(WorldModel world, ImageStore imageStore); // Moveable Entity
 
-    Point getPosition();
+    Point getPosition(); // Entity
 
-    void setPosition(Point position);
+    void setPosition(Point position); // Entity
 
-    List<PImage> getImages();
+    List<PImage> getImages(); // Entity
 
-    int getImageIndex();
+    int getImageIndex(); // Entity
 
-    int getActionPeriod();
+    //int getActionPeriod(); // Moveable entity
 }

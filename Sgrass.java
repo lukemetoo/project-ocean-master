@@ -3,7 +3,14 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class Sgrass implements Entity {
+public class Sgrass implements ActiveEntity {
+
+    private static final String SGRASS_KEY = "seaGrass";
+    private static final int SGRASS_NUM_PROPERTIES = 5;
+    private static final int SGRASS_ID = 1;
+    private static final int SGRASS_COL = 2;
+    private static final int SGRASS_ROW = 3;
+    private static final int SGRASS_ACTION_PERIOD = 4;
 
     private String id;
     private Point position;
@@ -28,15 +35,6 @@ public class Sgrass implements Entity {
         this.animationPeriod = animationPeriod;
     }
 
-    public int getAnimationPeriod(){
-        return this.animationPeriod;
-    }
-
-    public void nextImage()
-    {
-        this.imageIndex = (this.imageIndex + 1) % this.images.size();
-    }
-
     public void executeSgrassActivity(WorldModel world,
                                       ImageStore imageStore, EventScheduler scheduler)
     {
@@ -44,12 +42,14 @@ public class Sgrass implements Entity {
 
         if (openPt.isPresent())
         {
-            Entity fish = world.createFish(world.getFishIdPrefix() + this.id,
-                    openPt.get(), world.getFishCorruptMin() +
-                            world.rand.nextInt(world.getFishCorruptMax() - world.getFishCorruptMin()),
-                    imageStore.getImageList(world.getFishKey()));
+            EntityCreator entityCreator = new EntityCreator();
+
+            Entity fish = entityCreator.createFish(Fish.getFishIdPrefix() + this.id,
+                    openPt.get(), Fish.getFishCorruptMin() +
+                            world.rand.nextInt(Fish.getFishCorruptMax() - Fish.getFishCorruptMin()),
+                    imageStore.getImageList(Fish.getFishKey()));
             world.addEntity(fish);
-            fish.scheduleActions(scheduler, world, imageStore);
+            ((ActiveEntity)(fish)).scheduleActions(scheduler, world, imageStore);
         }
 
         scheduler.scheduleEvent(this,
@@ -69,33 +69,37 @@ public class Sgrass implements Entity {
     {
         return new AnimationAction(this, null, null, repeatCount);
     }
-
     public Action createActivityAction(WorldModel world,
-                                       ImageStore imageStore)
-    {
-        return new ActivityAction(this, world, imageStore, 0);
-    }
-
+                                       ImageStore imageStore) { return new ActivityAction(this, world, imageStore, 0); }
     public Point getPosition(){
         return position;
     }
-
     public void setPosition(Point position){
         this.position = position;
     }
-
     public List<PImage> getImages(){
         return images;
     }
-
     public int getImageIndex(){
         return imageIndex;
     }
-
     public int getActionPeriod(){
         return actionPeriod;
     }
+    public int getAnimationPeriod(){
+        return this.animationPeriod;
+    }
+    public void nextImage()
+    {
+        this.imageIndex = (this.imageIndex + 1) % this.images.size();
+    }
 
 
+    public static String getSgrassKey(){return SGRASS_KEY;}
+    public static int getSgrassNumProperties(){return SGRASS_NUM_PROPERTIES;}
+    public static int getSgrassId(){return SGRASS_ID;}
+    public static int getSgrassCol(){return SGRASS_COL;}
+    public static int getSgrassRow(){return SGRASS_ROW;}
+    public static int getSgrassActionPeriod(){return SGRASS_ACTION_PERIOD;}
 
 }

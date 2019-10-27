@@ -3,7 +3,16 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class OctoNotFull implements Entity {
+public class OctoNotFull implements Octo {
+
+    private static final String OCTO_KEY = "octo";
+    private static final int OCTO_NUM_PROPERTIES = 7;
+    private static final int OCTO_ID = 1;
+    private static final int OCTO_COL = 2;
+    private static final int OCTO_ROW = 3;
+    private static final int OCTO_LIMIT = 4;
+    private static final int OCTO_ACTION_PERIOD = 5;
+    private static final int OCTO_ANIMATION_PERIOD = 6;
 
     private String id;
     private Point position;
@@ -28,23 +37,16 @@ public class OctoNotFull implements Entity {
         this.animationPeriod = animationPeriod;
     }
 
-    public int getAnimationPeriod(){
-        return this.animationPeriod;
-    }
-
-    public void nextImage()
-    {
-        this.imageIndex = (this.imageIndex + 1) % this.images.size();
-    }
-
     public void executeOctoNotFullActivity(WorldModel world, ImageStore imageStore, EventScheduler scheduler)
     {
+        EntityCreator entityCreator = new EntityCreator(); // made this
+
         Optional<Entity> notFullTarget = world.findNearest(this.position,
                 Fish.class);
 
         if (!notFullTarget.isPresent() ||
                 !moveToNotFull(world, notFullTarget.get(), scheduler) ||
-                !transformNotFull(world, scheduler, imageStore))
+                !transformNotFull(world, scheduler, imageStore, entityCreator)) // changed this
         {
             scheduler.scheduleEvent(this,
                     createActivityAction(world, imageStore),
@@ -52,22 +54,12 @@ public class OctoNotFull implements Entity {
         }
     }
 
-    public void scheduleActions(EventScheduler scheduler,
-                                WorldModel world, ImageStore imageStore){
-
-        scheduler.scheduleEvent(this,
-                this.createActivityAction(world, imageStore),
-                this.actionPeriod);
-        scheduler.scheduleEvent(this,
-                this.createAnimationAction(0), this.getAnimationPeriod());
-    }
-
     public boolean transformNotFull(WorldModel world,
-                                    EventScheduler scheduler, ImageStore imageStore)
+                                    EventScheduler scheduler, ImageStore imageStore, EntityCreator entityCreator) // changed this
     {
         if (this.resourceCount >= this.resourceLimit)
         {
-            Entity octo = world.createOctoFull(this.id, this.resourceLimit,
+            Entity octo = entityCreator.createOctoFull(this.id, this.resourceLimit, // changed this
                     this.position, this.actionPeriod, this.animationPeriod,
                     this.images);
 
@@ -75,7 +67,7 @@ public class OctoNotFull implements Entity {
             scheduler.unscheduleAllEvents(this);
 
             world.addEntity(octo);
-            octo.scheduleActions(scheduler, world, imageStore);
+            ((ActiveEntity)(octo)).scheduleActions(scheduler, world, imageStore);
 
             return true;
         }
@@ -134,36 +126,51 @@ public class OctoNotFull implements Entity {
         return newPos;
     }
 
+    public void scheduleActions(EventScheduler scheduler,
+                                WorldModel world, ImageStore imageStore){
+
+        scheduler.scheduleEvent(this, this.createActivityAction(world, imageStore), OCTO_ACTION_PERIOD);
+        scheduler.scheduleEvent(this, this.createAnimationAction(0), OCTO_ANIMATION_PERIOD);
+    }
+
     public Action createAnimationAction(int repeatCount)
     {
         return new AnimationAction(this, null, null, repeatCount);
     }
-
     public Action createActivityAction(WorldModel world,
-                                       ImageStore imageStore)
-    {
-        return new ActivityAction(this, world, imageStore, 0);
-    }
-
+                                       ImageStore imageStore) { return new ActivityAction(this, world, imageStore, 0); }
     public Point getPosition(){
         return position;
     }
-
     public void setPosition(Point position){
         this.position = position;
     }
-
     public List<PImage> getImages(){
         return images;
     }
-
     public int getImageIndex(){
         return imageIndex;
     }
-
     public int getActionPeriod(){
-        return actionPeriod;
+        return getOctoActionPeriod();
     }
+    public int getAnimationPeriod(){
+        return getOctoAnimationPeriod();
+    }
+    public void nextImage()
+    {
+        this.imageIndex = (this.imageIndex + 1) % this.images.size();
+    }
+
+
+    public static String getOctoKey(){return OCTO_KEY;}
+    public static int getOctoNumProperties(){return OCTO_NUM_PROPERTIES;}
+    public static int getOctoId(){return OCTO_ID;}
+    public static int getOctoCol(){return OCTO_COL;}
+    public static int getOctoRow(){return OCTO_ROW;}
+    public static int getOctoLimit(){return OCTO_LIMIT;}
+    public static int getOctoActionPeriod(){return OCTO_ACTION_PERIOD;}
+    public static int getOctoAnimationPeriod(){return OCTO_ANIMATION_PERIOD;}
 
 
 }

@@ -4,6 +4,12 @@ import java.util.List;
 
 public class Obstacle implements Entity{
 
+    private static final String OBSTACLE_KEY = "obstacle";
+    private static final int OBSTACLE_NUM_PROPERTIES = 4;
+    private static final int OBSTACLE_ID = 1;
+    private static final int OBSTACLE_COL = 2;
+    private static final int OBSTACLE_ROW = 3;
+
     private String id;
     private Point position;
     private List<PImage> images;
@@ -27,60 +33,32 @@ public class Obstacle implements Entity{
         this.animationPeriod = animationPeriod;
     }
 
-    public Point getPosition(){
-        return this.position;
-    }
-
-    public void setPosition(Point position){
-        this.position = position;
-    }
-
-    public int getActionPeriod(){
-        return this.actionPeriod;
-    }
-
+    public int getActionPeriod(){ return this.actionPeriod; }
     public int getAnimationPeriod(){
         return this.animationPeriod;
     }
 
+
+
+    public Point getPosition(){
+        return this.position;
+    }
+    public void setPosition(Point position){
+        this.position = position;
+    }
     public int getImageIndex(){
         return this.imageIndex;
     }
-
     public List<PImage> getImages(){
         return this.images;
     }
 
 
-    // Obstacle objects don't use this method but, as of right now, I don't have a better solution. Need to use
-    // inheritance.
-
-    public void scheduleActions(EventScheduler scheduler, WorldModel world, ImageStore imageStore){
-
-    }
-
-
-    public Action createAnimationAction(int repeatCount) {
-        return null;
-    }
-
-
-    public Action createActivityAction(WorldModel world, ImageStore imageStore) {
-        return null;
-    }
-
-    public void nextImage(){
-
-    }
-
-
-
-
-
-
-
-
-
+    public static String getObstacleKey(){return OBSTACLE_KEY;}
+    public static int getObstacleNumProperties(){return OBSTACLE_NUM_PROPERTIES;}
+    public static int getObstacleId(){return OBSTACLE_ID;}
+    public static int getObstacleCol(){return OBSTACLE_COL;}
+    public static int getObstacleRow(){return OBSTACLE_ROW;}
 
 
 }

@@ -15,13 +15,13 @@ public class AnimationAction implements Action {
     }
 
     public void executeAction(EventScheduler scheduler){
-        entity.nextImage();
+        ((ActiveEntity)(entity)).nextImage();
 
         if (this.repeatCount != 1)
         {
             scheduler.scheduleEvent(this.entity,
-                    this.entity.createAnimationAction(Math.max(this.repeatCount - 1, 0)),
-                    this.entity.getAnimationPeriod());
+                    ((ActiveEntity)(this.entity)).createAnimationAction(Math.max(this.repeatCount - 1, 0)),
+                ((ActiveEntity)(this.entity)).getAnimationPeriod());
         }
     }
 }

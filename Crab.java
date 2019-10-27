@@ -3,42 +3,37 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public class Crab implements Entity{
+public class Crab implements ActiveEntity {
 
-    private String id;
+    private static final String CRAB_KEY = "crab";
+    private static final String CRAB_ID_SUFFIX = " -- crab";
+    private static final int CRAB_PERIOD_SCALE = 4;
+    private static final int CRAB_ANIMATION_MIN = 50;
+    private static final int CRAB_ANIMATION_MAX = 150;
+
     private Point position;
     private List<PImage> images;
     private int imageIndex;
-    private int resourceLimit;
-    private int resourceCount;
     private int actionPeriod;
     private int animationPeriod;
 
-    public Crab(String id, Point position,
-                  List<PImage> images, int resourceLimit, int resourceCount,
-                  int actionPeriod, int animationPeriod)
+
+    public Crab(Point position,
+                  List<PImage> images, int actionPeriod, int animationPeriod)
     {
-        this.id = id;
         this.position = position;
         this.images = images;
         this.imageIndex = 0;
-        this.resourceLimit = resourceLimit;
-        this.resourceCount = resourceCount;
         this.actionPeriod = actionPeriod;
         this.animationPeriod = animationPeriod;
     }
 
-    public int getAnimationPeriod(){
-        return this.animationPeriod;
-    }
-
-    public void nextImage()
-    {
-        this.imageIndex = (this.imageIndex + 1) % this.images.size();
-    }
 
     public void executeCrabActivity(WorldModel world,
                                     ImageStore imageStore, EventScheduler scheduler) {
+
+        EntityCreator entityCreator = new EntityCreator(); // made this
+
         Optional<Entity> crabTarget = world.findNearest(this.position, Sgrass.class);
         long nextPeriod = this.actionPeriod;
 
@@ -46,28 +41,18 @@ public class Crab implements Entity{
             Point tgtPos = crabTarget.get().getPosition();
 
             if (this.moveToCrab(world, crabTarget.get(), scheduler)) {
-                Entity quake = world.createQuake(tgtPos,
-                        imageStore.getImageList(world.getQuakeKey()));
+                Entity quake = entityCreator.createQuake(tgtPos, // changed this
+                        imageStore.getImageList(Quake.getQuakeKey()));
 
                 world.addEntity(quake);
                 nextPeriod += this.actionPeriod;
-                quake.scheduleActions(scheduler, world, imageStore);
+                ((ActiveEntity)(quake)).scheduleActions(scheduler, world, imageStore);
             }
         }
 
         scheduler.scheduleEvent(this,
                 this.createActivityAction(world, imageStore),
                 nextPeriod);
-    }
-
-    public void scheduleActions(EventScheduler scheduler,
-                                WorldModel world, ImageStore imageStore){
-
-        scheduler.scheduleEvent(this,
-                this.createActivityAction(world, imageStore),
-                this.actionPeriod);
-        scheduler.scheduleEvent(this,
-                this.createAnimationAction(0), this.getAnimationPeriod());
     }
 
     public boolean moveToCrab(WorldModel world,
@@ -123,36 +108,52 @@ public class Crab implements Entity{
         return newPos;
     }
 
+
+    public void scheduleActions(EventScheduler scheduler,
+                                WorldModel world, ImageStore imageStore){
+
+        scheduler.scheduleEvent(this,
+                this.createActivityAction(world, imageStore),
+                this.actionPeriod);
+        scheduler.scheduleEvent(this,
+                this.createAnimationAction(0), this.getAnimationPeriod());
+    }
+
+    public int getAnimationPeriod(){
+        return this.animationPeriod;
+    }
+    public void nextImage()
+    {
+        this.imageIndex = (this.imageIndex + 1) % this.images.size();
+    }
     public Action createAnimationAction(int repeatCount)
     {
         return new AnimationAction(this, null, null, repeatCount);
     }
-
     public Action createActivityAction(WorldModel world,
-                                       ImageStore imageStore)
-    {
-        return new ActivityAction(this, world, imageStore, 0);
-    }
-
+                                       ImageStore imageStore) { return new ActivityAction(this, world, imageStore, 0); }
     public Point getPosition(){
         return position;
     }
-
     public void setPosition(Point position){
         this.position = position;
     }
-
     public List<PImage> getImages(){
         return images;
     }
-
     public int getImageIndex(){
         return imageIndex;
     }
-
     public int getActionPeriod(){
         return actionPeriod;
     }
 
+
+
+    public static String getCrabKey(){return CRAB_KEY;}
+    public static String getCrabIdSuffix(){return CRAB_ID_SUFFIX;}
+    public static int getCrabPeriodScale(){return CRAB_PERIOD_SCALE;}
+    public static int getCrabAnimationMin(){return CRAB_ANIMATION_MIN;}
+    public static int getCrabAnimationMax(){return CRAB_ANIMATION_MAX;}
 
 }

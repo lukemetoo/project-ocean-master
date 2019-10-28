@@ -43,7 +43,7 @@ public class Fish implements ActiveEntity {
     {
         Point pos = this.position;  // store current position before removing
 
-        EntityCreator entityCreator = new EntityCreator(); //made this
+        EntityCreator entityCreator = new EntityCreator();
 
         world.removeEntity(this);
         scheduler.unscheduleAllEvents(this);

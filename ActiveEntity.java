@@ -14,10 +14,6 @@ public interface ActiveEntity extends Entity{
 
     void scheduleActions(EventScheduler scheduler, WorldModel world, ImageStore imageStore);
 
-    //List<PImage> getImages();
-
-    //int getImageIndex();
-
     int getActionPeriod();
 
 
